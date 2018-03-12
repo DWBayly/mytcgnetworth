@@ -1,7 +1,7 @@
 {
   "name": "mytcgnetworth",
   "version": "1.0.0",
-  "description": "",
+  "description": "A react based app used to curate a Magic the Gathering collection and calculated net worth. ",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,10 +10,20 @@
     "type": "git",
     "url": "git+https://github.com/DWBayly/mytcgnetworth.git"
   },
-  "author": "",
+  "author": "David Bayly, DWBayly",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DWBayly/mytcgnetworth/issues"
   },
-  "homepage": "https://github.com/DWBayly/mytcgnetworth#readme"
+  "homepage": "https://github.com/DWBayly/mytcgnetworth#readme",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "mtgsdk": "^0.3.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "mtg"
+  ]
 }
