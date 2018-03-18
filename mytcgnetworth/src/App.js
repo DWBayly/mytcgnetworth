@@ -10,11 +10,19 @@ class App extends Component {
     this.state={
       loggedin:false
     }
+    this.login=this.login.bind(this);
+    this.ws = new WebSocket("ws://localhost:3001/");
+  }
+  login(){
+    this.setState({loggedin:!this.state.loggedin});
   }
   render() {
+    this.ws.onmessage = function (event) {
+      let message = JSON.parse(event.data);
+      console.log(message);
+    }
     if(!this.state.loggedin){
-      return(<Login/>);
-
+      return(<Login state={this.state} login = {this.login} />);
     }else{
       return (
         <Router>
