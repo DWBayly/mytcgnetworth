@@ -1,9 +1,10 @@
-require('dotenv').config();
+ require('dotenv').config();
+ const Jimp = require('jimp');
 const express = require('express');
 const PORT = process.env.PORT || 3001;
 const path = require('path');
 const SocketServer = require('ws').Server;
-
+const acomplete = require('./acomplete');
 var triecomplete = require("triecomplete");
 const server = express()
 // Make the express server serve static assets (html, javascript, css) from the /public folder
@@ -21,8 +22,20 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
 	console.log('Connected');
 	ws.on('message', function(message) {
-		console.log(message);
-
+		//console.log(message);
+		let data = JSON.parse(message);
+		let response = {};
+		switch(data.type){
+			case 'fill':
+				response.data = acomplete.autocomplete(data.str)
+				response.type = 'fill';
+			break;
+			default:
+				console.log(data);
+				response.type = 'default';
+			break;
+		}
+		wss.broadcast(response);
 	});
 	ws.on('close', () => {
 		console.log('Client disconnected');

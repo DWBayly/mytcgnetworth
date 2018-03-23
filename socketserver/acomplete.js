@@ -1,4 +1,9 @@
-function autocomplete(str,arr){
+let rf = require('./rf');
+let arr = [];
+rf.rf('sortedcardnames.txt').then((cards)=>{
+	arr = cards; 
+});
+function autocomplete(str){
 	str = str.toLowerCase();
 	var re = new RegExp("^"+str+'.*');
 	let results = [];
@@ -15,4 +20,4 @@ function autocomplete(str,arr){
 	}
 	return results;	
 }
-module.exports{autocomplete:autocomplete};
+module.exports={autocomplete:autocomplete};
