@@ -1,4 +1,58 @@
-var request = require("request");
+const fs = require('fs');
+function rf(file){
+  return new Promise((resolve,reject)=>{
+    fs.readFile(file,function(err,content){
+      if(err){
+        console.log(err);
+      }
+      let x = content.toString('utf8');
+      let arr = x.split(',');
+      //console.log(arr);
+      resolve(arr);
+    });
+  });
+}
+function wf(file,data){
+  return new Promise((resolve,reject)=>{
+    fs.writeFile(file,data,(err)=>{
+      if(err){
+        reject(err);
+      }else{
+        resolve(true);
+      }
+    })
+  });
+}
+var Autocomplete = require('autocomplete')
+const mtg =require('mtgsdk');
+let str = [];
+let x =mtg.card.all()
+let y = 0;
+let z = 0;
+x.on('data',cards=>{
+    console.log(cards.name);
+    str.push(cards.name);
+    z++;
+    if(z>1000){
+        z=0;
+        wf(`test${y}`,str);
+        
+        y++;
+        if(y>3){
+            return;
+        }
+    }
+})
+
+x.on('end',()=>{
+    //console.log('its over!');
+    //console.log(str);
+    wf('test2.txt',str);
+})
+//console.log(str);
+
+
+/*var request = require("request");
 var rp = require('request-promise');
 require('dotenv').config();
 var options = {
@@ -36,3 +90,4 @@ rp(options)
 
 
 
+*/
