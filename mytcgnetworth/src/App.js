@@ -9,12 +9,14 @@ class App extends Component {
     super(props);
     this.state={
       loggedin:false,
-      suggestions:[]
+      suggestions:[],
+      cards:[]
     }
     this.login=this.login.bind(this);
     this.getSuggestions= this.getSuggestions.bind(this);
     this.ws = new WebSocket("ws://localhost:3001/");
     this.setSuggestions=this.setSuggestions.bind(this);
+    this.setCardsList = this.setCardsList.bind(this);
   }
   login(){
     this.setState({loggedin:!this.state.loggedin});
@@ -29,9 +31,13 @@ class App extends Component {
   setSuggestions(data){
     this.setState({suggestions:data});
   }
+  setCardsList(data){
+    this.setState({cards:data});
+  }
   render() {
     //let suggestionList = [];
     let ss = this.setSuggestions;
+    let scl = this.setCardsList;
     this.ws.onmessage = function (event) {
       let message = JSON.parse(event.data);
       //console.log(message);
@@ -39,6 +45,8 @@ class App extends Component {
         case 'fill':
         ss(message.data);
         break;
+        case '':
+
         default:
         break;
       }
@@ -49,11 +57,20 @@ class App extends Component {
         <option key = {x} value={this.state.suggestions[x]}/>
         );
     } 
+    let cardList = [];
+    for(let x in this.state.cards){
+      elements.push(
+          <li>this.state.cards[x].name</li>
+        );
+    }
     //console.log(elements);
     return (
           <div className ='Search-Container' style = {{backgroundImage:`url(${require('./images/blacklotus.jpg')})`}}>
-          
-            <form className ='Search-Form'>
+          <div className ='Search-Form'>
+          Welcome to mytcgnetworth.com
+          </div>
+          <div className ='Search-Form'>
+            <form >
               <label>Input cards</label>
               <br/>
               <input id='Card-Search' list ='suggestions' name = 'suggestions' type = 'text' onKeyUp ={this.getSuggestions}/>
@@ -64,6 +81,12 @@ class App extends Component {
               <br/>
               <button>Submit</button>
             </form>
+
+            <ul className = 'CardList'>
+            cardslist
+            {cardList}
+            </ul>
+            </div>
           </div>
     );
   }

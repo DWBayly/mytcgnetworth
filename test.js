@@ -1,4 +1,4 @@
-const fs = require('fs');
+/*const fs = require('fs');
 function rf(file){
   return new Promise((resolve,reject)=>{
     fs.readFile(file,function(err,content){
@@ -13,8 +13,9 @@ function rf(file){
   });
 }
 function wf(file,data){
+  let str = JSON.stringify(data);
   return new Promise((resolve,reject)=>{
-    fs.writeFile(file,data,(err)=>{
+    fs.writeFile(file,str,(err)=>{
       if(err){
         reject(err);
       }else{
@@ -23,36 +24,27 @@ function wf(file,data){
     })
   });
 }
-var Autocomplete = require('autocomplete')
 const mtg =require('mtgsdk');
-let str = [];
+let str = {};
 let x =mtg.card.all()
-let y = 0;
-let z = 0;
 x.on('data',cards=>{
-    console.log(cards.name);
-    str.push(cards.name);
-    z++;
-    if(z>1000){
-        z=0;
-        wf(`test${y}`,str);
-        
-        y++;
-        if(y>3){
-            return;
-        }
+    if(str[cards.name]===undefined){
+      str[cards.name]=[];
     }
+    str[cards.name].push(cards);
+
+    console.log(cards.multiverseid);
+
 })
 
 x.on('end',()=>{
-    //console.log('its over!');
+    console.log('its over!');
+    wf(`mvids`,str);
     //console.log(str);
-    wf('test2.txt',str);
+    //wf('test2.txt',str);
 })
-//console.log(str);
-
-
-/*var request = require("request");
+//console.log(str);*/
+/*
 var rp = require('request-promise');
 require('dotenv').config();
 var options = {
@@ -73,10 +65,8 @@ rp(options)
         console.log(response);
         // POST succeeded...
         let token = response.token;
-        options.uri = 'https://www.echomtg.com/api/inventory/view/'
+        options.uri = 'https://www.echomtg.com/api/data/card_reference/'
         options.qs.start = 0;
-        options.qs.limit= '100';
-        options.qs.order = 'desc';
         options.qs.auth = token;
         options.method = 'GET';
         rp(options).then(function(res){
@@ -86,8 +76,4 @@ rp(options)
     .catch(function (err) {
         // POST failed...
         console.log(err);
-    });
-
-
-
-*/
+    });*/

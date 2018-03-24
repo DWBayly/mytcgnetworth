@@ -3,9 +3,34 @@ const express = require('express');
 const PORT = process.env.PORT || 3001;
 const SocketServer = require('ws').Server;
 const acomplete = require('./acomplete');
+const filter = require('./filter');
 let rp = require('request-promise');
 var triecomplete = require("triecomplete");
 const server = express()
+var options = {
+    method: 'POST',
+    uri: 'https://www.echomtg.com/api/user/auth/',
+    qs: {
+       email:process.env.email,
+       password:process.env.password
+    },
+    headers: {
+        'User-Agent': 'Request-Promise'
+    },
+    json: true // Automatically stringifies the body to JSON
+};
+rp(options)
+    .then(function (response) {
+        console.log(response);
+        // POST succeeded...
+        let token = response.token;
+        options.uri = 'https://www.echomtg.com/api/inventory/view/'
+        options.qs.auth = token;
+    })
+    .catch(function (err) {
+        // POST failed...
+        console.log(err);
+    });
 
 // Make the express server serve static assets (html, javascript, css) from the /public folder
   .use(express.static('public'))
@@ -31,6 +56,9 @@ wss.on('connection', (ws) => {
 				response.type = 'fill';
 			break;
 			case 'getCards':
+
+			break;
+			case 'addCards':
 			break;
 			default:
 				console.log(data);
