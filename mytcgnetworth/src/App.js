@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+//import {BrowserRouter as Router, Route} from 'react-router-dom';
 //import Login from './routes/Login.js'
 //import Main from './routes/Main.js'
 class App extends Component {
@@ -38,6 +38,7 @@ class App extends Component {
       switch(message.type){
         case 'fill':
         ss(message.data);
+        break;
         default:
         break;
       }
@@ -47,27 +48,26 @@ class App extends Component {
       elements.push(
         <option key = {x} value={this.state.suggestions[x]}/>
         );
-    }
+    } 
     //console.log(elements);
     return (
-        <Router>
-          <div>
-          <form id ='Search-Form'>
-            <label>Input cards</label>
-            <br/>
-            <input id='Card-Search' list ='suggestions' name = 'suggestions' type = 'text' onKeyUp ={this.getSuggestions}/>
-            <datalist id = 'suggestions'>
+          <div className ='Search-Container' style = {{backgroundImage:`url(${require('./images/blacklotus.jpg')})`}}>
+          
+            <form className ='Search-Form'>
+              <label>Input cards</label>
+              <br/>
+              <input id='Card-Search' list ='suggestions' name = 'suggestions' type = 'text' onKeyUp ={this.getSuggestions}/>
+              <datalist id = 'suggestions'>
 
-              {elements}
-            </datalist>
-            <br/>
-            <button>Submit</button>
-          </form>
+                {elements}
+              </datalist>
+              <br/>
+              <button>Submit</button>
+            </form>
           </div>
-        </Router>
     );
   }
 }
 
 export default App;
- 
+  

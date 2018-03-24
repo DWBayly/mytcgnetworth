@@ -1,12 +1,12 @@
- require('dotenv').config();
- const Jimp = require('jimp');
+require('dotenv').config();
 const express = require('express');
 const PORT = process.env.PORT || 3001;
-const path = require('path');
 const SocketServer = require('ws').Server;
 const acomplete = require('./acomplete');
+let rp = require('request-promise');
 var triecomplete = require("triecomplete");
 const server = express()
+
 // Make the express server serve static assets (html, javascript, css) from the /public folder
   .use(express.static('public'))
 .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
@@ -29,6 +29,8 @@ wss.on('connection', (ws) => {
 			case 'fill':
 				response.data = acomplete.autocomplete(data.str)
 				response.type = 'fill';
+			break;
+			case 'getCards':
 			break;
 			default:
 				console.log(data);
