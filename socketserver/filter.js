@@ -1,15 +1,21 @@
 let fs = require('fs');
+let rf = require('./rf');
 let data = {};
 
-fs.readFile('mvids',function(err,content){
+fs.readFile('names.txt',function(err,content){
       if(err){
         console.log(err);
       }
-      let data = JSON.parse(content);
+      let temp  = JSON.parse(content);
+      for(let x in temp){
+        data[temp[x]]=temp[x];
+      }
     });
 function search(str){
   return data[str];
 }
+
+//setTimeout(function(){console.log(search('Avacyn, Angel of Hope'))},10000);
 module.exports = {search:search};
 
 /*let values = [];

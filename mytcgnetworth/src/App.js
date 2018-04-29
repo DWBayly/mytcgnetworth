@@ -12,11 +12,13 @@ class App extends Component {
       suggestions:[],
       cards:[]
     }
+    this.card = '';
     this.login=this.login.bind(this);
     this.getSuggestions= this.getSuggestions.bind(this);
     this.ws = new WebSocket("ws://localhost:3001/");
     this.setSuggestions=this.setSuggestions.bind(this);
     this.setCardsList = this.setCardsList.bind(this);
+    this.submitCard = this.submitCard.bind(this);
   }
   login(){
     this.setState({loggedin:!this.state.loggedin});
@@ -26,13 +28,24 @@ class App extends Component {
     let message={};
     message.type = 'fill';
     message.str = event.target.value;
+    this.card = event.target.value;
+    this.ws.send(JSON.stringify(message));
+  }
+  submitCard(event){
+    let message = {};
+    message.type = 'getCards';
+    message.card = this.card;
     this.ws.send(JSON.stringify(message));
   }
   setSuggestions(data){
     this.setState({suggestions:data});
   }
   setCardsList(data){
-    this.setState({cards:data});
+    console.log(data);
+    //let temp = this.state.cards;
+    //temp[data[0].name] = {data:data,selected:0};
+
+    //this.setState({cards:temp});
   }
   render() {
     //let suggestionList = [];
@@ -40,10 +53,13 @@ class App extends Component {
     let scl = this.setCardsList;
     this.ws.onmessage = function (event) {
       let message = JSON.parse(event.data);
-      //console.log(message);
+      console.log(message);
       switch(message.type){
         case 'fill':
-        ss(message.data);
+          ss(message.data);
+        break;
+        case 'getCards':
+          scl(message.data);
         break;
         case '':
 
@@ -59,11 +75,22 @@ class App extends Component {
     } 
     let cardList = [];
     for(let x in this.state.cards){
-      elements.push(
-          <li>this.state.cards[x].name</li>
+      let temp = [];
+      for (let y in this.state.cards[x]){
+        temp.push(
+            <option key = {y} value = {this.state.cards[x][y]} style = {{width:'300px'}}/>
+          )
+      }
+      cardList.push(
+          <div key = {x}>
+          {x}
+          <select>
+            {temp}
+          </select>
+          </div>
         );
     }
-    //console.log(elements);
+    console.log(this.state.cards);
     return (
           <div className ='Search-Container' style = {{backgroundImage:`url(${require('./images/blacklotus.jpg')})`}}>
           <div className ='Search-Form'>
@@ -79,11 +106,9 @@ class App extends Component {
                 {elements}
               </datalist>
               <br/>
-              <button>Submit</button>
             </form>
-
+            <button onClick = {this.submitCard}>Submit</button>
             <ul className = 'CardList'>
-            cardslist
             {cardList}
             </ul>
             </div>
@@ -91,6 +116,5 @@ class App extends Component {
     );
   }
 }
-
 export default App;
   

@@ -1,8 +1,13 @@
 let rf = require('./rf');
+const fs = require('fs');
 let arr = [];
-rf.rf('sortedcardnames.txt').then((cards)=>{
-	arr = cards; 
-});
+fs.readFile('names.txt',function(err,content){
+	if(err){
+		console.log(err);
+	}else{
+		arr = JSON.parse(content);
+	}
+})
 function autocomplete(str){
 	str = str.toLowerCase();
 	var re = new RegExp("^"+str+'.*');
@@ -20,4 +25,5 @@ function autocomplete(str){
 	}
 	return results;	
 }
+//setTimeout(function(){console.log(autocomplete("Ava"))},2000);
 module.exports={autocomplete:autocomplete};

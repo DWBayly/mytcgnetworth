@@ -4,10 +4,14 @@ const PORT = process.env.PORT || 3001;
 const SocketServer = require('ws').Server;
 const acomplete = require('./acomplete');
 const filter = require('./filter');
+const list = require('./list');
 let rp = require('request-promise');
 var triecomplete = require("triecomplete");
-const server = express()
-var options = {
+const server = express()// Make the express server serve static assets (html, javascript, css) from the /public folder
+  .use(express.static('public'))
+.listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
+const wss = new SocketServer({server});
+/*var options = {
     method: 'POST',
     uri: 'https://www.echomtg.com/api/user/auth/',
     qs: {
@@ -30,12 +34,9 @@ rp(options)
     .catch(function (err) {
         // POST failed...
         console.log(err);
-    });
+    });*/
 
-// Make the express server serve static assets (html, javascript, css) from the /public folder
-  .use(express.static('public'))
-.listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
-const wss = new SocketServer({server});
+
 process.on('unhandledRejection',err=>{
 	console.log(err.message);
 });
@@ -47,7 +48,7 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
 	console.log('Connected');
 	ws.on('message', function(message) {
-		//console.log(message);
+		console.log(message);
 		let data = JSON.parse(message);
 		let response = {};
 		switch(data.type){
@@ -56,15 +57,21 @@ wss.on('connection', (ws) => {
 				response.type = 'fill';
 			break;
 			case 'getCards':
-
+				//console.log(data.card);
+				response.data = list.getCard(data.card);
+				console.log(response.data);
+				response.type = 'getCards';
 			break;
-			case 'addCards':
+			case 'getPrice':
+				response.data = list.getPrice();
+				response.type = 'setCardPrice'
 			break;
 			default:
 				console.log(data);
 				response.type = 'default';
 			break;
 		}
+		console.log(response);
 		wss.broadcast(response);
 	});
 	ws.on('close', () => {
