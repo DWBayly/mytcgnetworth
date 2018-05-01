@@ -25,6 +25,8 @@ function getCard(name){
             //console.log(response);
             getPriceRecursive(response,0,[]).then(function(result){
                     console.log(result);
+                    response.price = result;
+                    resolve(response);
             });
         }).catch(function(err){
             reject(err);
@@ -57,7 +59,7 @@ function getPrice(pid){
         });
     });
 }
-setTimeout(function(){getCard("Tarmogoyf")},2000);
+//setTimeout(function(){getCard("Tarmogoyf")},2000);
 module.exports = {
     getCard:getCard,
     getPrice:getPrice

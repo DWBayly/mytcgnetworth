@@ -21,6 +21,7 @@ class App extends Component {
     this.setCardsList = this.setCardsList.bind(this);
     this.submitCard = this.submitCard.bind(this);
     this.state.remove = this.remove.bind(this);
+    this.state.changeSelection = this.changeSelection.bind(this);
   }
   login(){
     this.setState({loggedin:!this.state.loggedin});
@@ -43,7 +44,6 @@ class App extends Component {
     this.setState({suggestions:data});
   }
   setCardsList(data){
-    console.log(data);
     let temp = this.state.cards;
     temp.push(data);
     this.setState({cards:temp});
@@ -53,13 +53,18 @@ class App extends Component {
     temp.splice(index,1);
     this.setState({cards:temp});
   }
+  changeSelection(event){
+    let temp = this.state.cards;
+    temp[event[0]].index = event[1]
+    this.setState({cards:temp});
+  }
   render() {
     //let suggestionList = [];
     let ss = this.setSuggestions;
     let scl = this.setCardsList;
     this.ws.onmessage = function (event) {
       let message = JSON.parse(event.data);
-      console.log(message);
+      //console.log(message);
       switch(message.type){
         case 'fill':
           ss(message.data);
@@ -79,15 +84,6 @@ class App extends Component {
         <option key = {x} value={this.state.suggestions[x]}/>
         );
     } 
-    let cardList = [];
-    for(let x in this.state.cards){
-      cardList.push(
-          <div key = {x}>
-          {this.state.cards[x].results[0].productName}-
-          ${this.state.cards[x].price.results[0].price}
-          </div>
-        );
-    }
     console.log(this.state.cards);
     return (
           <div className ='Search-Container' style = {{backgroundImage:`url(${require('./images/blacklotus.jpg')})`}}>

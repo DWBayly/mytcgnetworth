@@ -11,32 +11,6 @@ const server = express()// Make the express server serve static assets (html, ja
   .use(express.static('public'))
 .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 const wss = new SocketServer({server});
-/*var options = {
-    method: 'POST',
-    uri: 'https://www.echomtg.com/api/user/auth/',
-    qs: {
-       email:process.env.email,
-       password:process.env.password
-    },
-    headers: {
-        'User-Agent': 'Request-Promise'
-    },
-    json: true // Automatically stringifies the body to JSON
-};
-rp(options)
-    .then(function (response) {
-        console.log(response);
-        // POST succeeded...
-        let token = response.token;
-        options.uri = 'https://www.echomtg.com/api/inventory/view/'
-        options.qs.auth = token;
-    })
-    .catch(function (err) {
-        // POST failed...
-        console.log(err);
-    });*/
-
-
 process.on('unhandledRejection',err=>{
 	console.log(err.message);
 });
@@ -62,6 +36,7 @@ wss.on('connection', (ws) => {
 				list.getCard(data.card).then(function(data){
 					response.data = data;
 					response.data.index = 0;
+					response.data.quantity=1;
 					wss.broadcast(response);
 				});
 
@@ -72,7 +47,6 @@ wss.on('connection', (ws) => {
 					response.data= data;
 					wss.broadcast(response);
 				});
-
 			break;
 			default:
 				console.log(data);
