@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 //import {BrowserRouter as Router, Route} from 'react-router-dom';
 //import Login from './routes/Login.js'
+import List from './List.jsx';
 //import Main from './routes/Main.js'
 class App extends Component {
   constructor(props){
@@ -19,12 +20,13 @@ class App extends Component {
     this.setSuggestions=this.setSuggestions.bind(this);
     this.setCardsList = this.setCardsList.bind(this);
     this.submitCard = this.submitCard.bind(this);
+    this.state.remove = this.remove.bind(this);
   }
   login(){
     this.setState({loggedin:!this.state.loggedin});
   }
   getSuggestions(event){
-    //console.log(event.key);
+    
     let message={};
     message.type = 'fill';
     message.str = event.target.value;
@@ -42,10 +44,14 @@ class App extends Component {
   }
   setCardsList(data){
     console.log(data);
-    //let temp = this.state.cards;
-    //temp[data[0].name] = {data:data,selected:0};
-
-    //this.setState({cards:temp});
+    let temp = this.state.cards;
+    temp.push(data);
+    this.setState({cards:temp});
+  }
+  remove(index){
+    let temp = this.state.cards;
+    temp.splice(index,1);
+    this.setState({cards:temp});
   }
   render() {
     //let suggestionList = [];
@@ -61,7 +67,7 @@ class App extends Component {
         case 'getCards':
           scl(message.data);
         break;
-        case '':
+        case 'getPrice':
 
         default:
         break;
@@ -75,18 +81,10 @@ class App extends Component {
     } 
     let cardList = [];
     for(let x in this.state.cards){
-      let temp = [];
-      for (let y in this.state.cards[x]){
-        temp.push(
-            <option key = {y} value = {this.state.cards[x][y]} style = {{width:'300px'}}/>
-          )
-      }
       cardList.push(
           <div key = {x}>
-          {x}
-          <select>
-            {temp}
-          </select>
+          {this.state.cards[x].results[0].productName}-
+          ${this.state.cards[x].price.results[0].price}
           </div>
         );
     }
@@ -97,19 +95,19 @@ class App extends Component {
           Welcome to mytcgnetworth.com
           </div>
           <div className ='Search-Form'>
-            <form >
               <label>Input cards</label>
               <br/>
               <input id='Card-Search' list ='suggestions' name = 'suggestions' type = 'text' onKeyUp ={this.getSuggestions}/>
               <datalist id = 'suggestions'>
-
                 {elements}
               </datalist>
+              
               <br/>
-            </form>
+              <br/>
+              <br/>
             <button onClick = {this.submitCard}>Submit</button>
             <ul className = 'CardList'>
-            {cardList}
+            <List cardlist = {this.state.cards} state = {this.state}/>
             </ul>
             </div>
           </div>

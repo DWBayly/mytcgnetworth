@@ -55,16 +55,24 @@ wss.on('connection', (ws) => {
 			case 'fill':
 				response.data = acomplete.autocomplete(data.str)
 				response.type = 'fill';
+				wss.broadcast(response);
 			break;
 			case 'getCards':
-				//console.log(data.card);
-				response.data = list.getCard(data.card);
-				console.log(response.data);
 				response.type = 'getCards';
+				list.getCard(data.card).then(function(data){
+					response.data = data;
+					response.data.index = 0;
+					wss.broadcast(response);
+				});
+
 			break;
 			case 'getPrice':
-				response.data = list.getPrice();
 				response.type = 'setCardPrice'
+				list.getCard(data.card).then(function(data){
+					response.data= data;
+					wss.broadcast(response);
+				});
+
 			break;
 			default:
 				console.log(data);
@@ -72,7 +80,7 @@ wss.on('connection', (ws) => {
 			break;
 		}
 		console.log(response);
-		wss.broadcast(response);
+
 	});
 	ws.on('close', () => {
 		console.log('Client disconnected');

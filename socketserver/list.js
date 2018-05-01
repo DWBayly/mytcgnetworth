@@ -22,17 +22,29 @@ function getCard(name){
     };
     return new Promise((resolve,reject)=>{ 
         rp(options).then(function(response){
-            console.log(response);
-            getPrice(response.results[0].productConditions[0].productConditionId).then(function(pricedata){
-                console.log(response);
-                response.price = pricedata;
-                resolve(response);
-
+            //console.log(response);
+            getPriceRecursive(response,0,[]).then(function(result){
+                    console.log(result);
             });
         }).catch(function(err){
             reject(err);
         });
     });
+}
+function getPriceRecursive(response,index,arr){
+    return new Promise (function(resolve,reject){
+        if(index >=response.results.length){
+            resolve(arr);
+        }
+        getPrice(response.results[index].productConditions[0].productConditionId).then(function(pricedata){
+            //console.log(pricedata);
+            arr.push(pricedata);
+            getPriceRecursive(response,index+1,arr).then(function(result){
+                resolve(result);
+            });
+        });
+    });
+
 }
 function getPrice(pid){
     options.uri=`http://api.tcgplayer.com/pricing/marketprices/${pid}`
@@ -45,7 +57,7 @@ function getPrice(pid){
         });
     });
 }
-//setTimeout(function(){getCard("Tarmogoyf")},2000);
+setTimeout(function(){getCard("Tarmogoyf")},2000);
 module.exports = {
     getCard:getCard,
     getPrice:getPrice
