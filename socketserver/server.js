@@ -48,6 +48,15 @@ wss.on('connection', (ws) => {
 					wss.broadcast(response);
 				});
 			break;
+			case 'save':
+
+			break;
+			case 'load':
+
+			break;
+
+			case 'getSaveList':
+			break;
 			default:
 				console.log(data);
 				response.type = 'default';

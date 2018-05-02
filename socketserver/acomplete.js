@@ -6,6 +6,7 @@ fs.readFile('names.txt',function(err,content){
 		console.log(err);
 	}else{
 		arr = JSON.parse(content);
+		arr = arr.sort();
 	}
 })
 function autocomplete(str){

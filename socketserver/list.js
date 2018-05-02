@@ -22,10 +22,10 @@ function getCard(name){
     };
     return new Promise((resolve,reject)=>{ 
         rp(options).then(function(response){
-            //console.log(response);
+            console.log(response);
             getPriceRecursive(response,0,[]).then(function(result){
-                    console.log(result);
                     response.price = result;
+                    //console.log(response);
                     resolve(response);
             });
         }).catch(function(err){
@@ -39,8 +39,18 @@ function getPriceRecursive(response,index,arr){
             resolve(arr);
         }
         getPrice(response.results[index].productConditions[0].productConditionId).then(function(pricedata){
-            //console.log(pricedata);
-            arr.push(pricedata);
+            console.log("Price Data : "+pricedata);
+            if(!pricedata){
+                arr.push({success:false,
+                    errors:[],
+                    results:[{productConditionId:response.results[index].productConditions[0].productConditionId,
+                    price:0,
+                    lowestRange:0,
+                    highestRange:0}]
+                })
+            }else{
+                arr.push(pricedata);
+            }
             getPriceRecursive(response,index+1,arr).then(function(result){
                 resolve(result);
             });
@@ -55,7 +65,7 @@ function getPrice(pid){
             console.log(response);
             resolve(response);
         }).catch(function(err){
-            reject(err);
+            resolve(false);
         });
     });
 }
