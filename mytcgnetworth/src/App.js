@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
-//import {BrowserRouter as Router, Route} from 'react-router-dom';
+import Header from './Header'
+import Home from './Home'
+import { Switch, Route } from 'react-router-dom'
 //import Login from './routes/Login.js'
-import List from './List.jsx';
+import Save from './Save'
+import Load from './Load'
 //import Main from './routes/Main.js'
 class App extends Component {
   constructor(props){
@@ -12,7 +15,9 @@ class App extends Component {
       loggedin:false,
       suggestions:[],
       cards:[],
-      cardurl : 'https://d1u5p3l4wpay3k.cloudfront.net/mtgsalvation_gamepedia/thumb/f/f8/Magic_card_back.jpg/429px-Magic_card_back.jpg?version=d581d48ea4f0bfe8670c2e8a4cae3c98'
+      cardurl : 'https://d1u5p3l4wpay3k.cloudfront.net/mtgsalvation_gamepedia/thumb/f/f8/Magic_card_back.jpg/429px-Magic_card_back.jpg?version=d581d48ea4f0bfe8670c2e8a4cae3c98',
+      sname:"",
+      lname:"",
     }
     this.card = '';
     this.login=this.login.bind(this);
@@ -24,14 +29,37 @@ class App extends Component {
     this.state.remove = this.remove.bind(this);
     this.state.changeSelection = this.changeSelection.bind(this);
     this.state.updateQuantity = this.updateQuantity.bind(this);
+    this.saveList=this.saveList.bind(this);
+    this.loadList=this.loadList.bind(this);
+    this.setsName =this.setsName.bind(this);
+    this.setlname = this.setlName.bind(this);
   }
   login(){
     this.setState({loggedin:!this.state.loggedin});
+  }
+  setsName(){
+
+
+  }
+  setlName(){
+
+
   }
   updateQuantity(card,newval){
     let temp = this.state.cards;
     temp[card].quantity= newval;
     this.setState({cards:temp})
+  }
+  saveList(){
+    let message = this.state;
+    message.type = "save";
+    this.ws.send(JSON.string);
+  }
+  loadList(id){
+    let message = {};
+    message.type = "load";
+    message.id =id;
+    this.ws.send(JSON.string);
   }
   getSuggestions(event){
     let message={};
@@ -72,12 +100,7 @@ class App extends Component {
     this.setState({cards:temp,cardurl:temp[event[0]].results[event[1]].image});
   }
   render() {
-    let total = 0;
-    for(let x in this.state.cards){
-      total = total + this.state.cards[x].price[this.state.cards[x].index].results[0].price*this.state.cards[x].quantity;
-    }
-    total = total.toFixed(2);
-    let ss = this.setSuggestions;
+      let ss = this.setSuggestions;
     let scl = this.setCardsList;
     this.ws.onmessage = function (event) {
       let message = JSON.parse(event.data);
@@ -95,46 +118,33 @@ class App extends Component {
         break;
       }
     }
-    let elements = [];
-    for(let x in this.state.suggestions){
-      elements.push(
-        <option key = {x} value={this.state.suggestions[x]}/>
-        );
-    } 
+      <Home submitCard={this.submitCard} ws = {this.ws} getSuggestions= {this.getSuggestions} state = {this.state}/>
     return (
-          <div className ='Search-Container' >
-          <div className ='Search-Form'>
-          <div>
-          <h1>Welcome to mytcgnetworth.com</h1>
+
+      <div className ='Search-Container' >
+        <div className ='Search-Form'>
           <br/>
-
-          </div>
-            <div>
-              <label>Input cards</label>
-              <br/>
-              <input id='Card-Search' list ='suggestions' name = 'suggestions' type = 'text' onKeyUp ={this.getSuggestions}/>
-              <datalist id = 'suggestions'>
-                {elements}
-              </datalist>
-              <br/>
-              <br/>
-              <br/>
-            <button className="SearchButton" onClick = {this.submitCard}>Submit</button><br/>
+          <h1>Welcome to My TCG Networth</h1>
+            <Switch>
+              <Route exact path='/' render={()=>(
+                <Home submitCard={this.submitCard}
+                ws = {this.ws}
+                getSuggestions= {this.getSuggestions}
+                state = {this.state}/>
+                )
+              }/>
+              <Route path='/load' render = {()=>(
+                  <Load state={this.state}/>
+                )
+              }/>
+              <Route path='/save' render = {()=>(
+                  <Save state = {this.state}/>
+                )
+              } />
+            </Switch>
             
-            <br/>
-
-            Total value : $ {total} 
-            <div className = "row">
-              <div className = "column">
-                <List className = 'CardList' cardlist = {this.state.cards} state = {this.state}/>
-              </div>
-              <div className ="column">
-                <img className='CardImage' src = {this.state.cardurl} width ='200px' height = '285px'/>
-              </div>
-            </div>
-            </div>
-          </div>
-        </div>
+      </div>
+    </div>
     );
   }
 }

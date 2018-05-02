@@ -64,5 +64,3 @@ class List extends Component{
   }
 }
 export default List;
-
-//<img height = "100" src = {cardlist[x].results[cardlist[x].index].image}/><br/>
