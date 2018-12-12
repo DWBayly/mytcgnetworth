@@ -8,10 +8,10 @@ class Save extends Component{
   		<div className= 'row'>
   			<div className= 'column'>
   				<label>Input Name</label>
-  				<input type = 'text'/>
+  				<input type = 'text' onChange = {this.props.state.setsName}/>
   			</div>
   			<div className= 'column'>
-  				<button className='SearchButton'>Save</button>
+  				<button className='SearchButton' onClick={this.props.state.saveList}>Save</button>
   			</div>
   		</div>
   	)

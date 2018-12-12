@@ -5,6 +5,7 @@ const SocketServer = require('ws').Server;
 const acomplete = require('./acomplete');
 const filter = require('./filter');
 const list = require('./list');
+const loadsave = require('./loadsave');
 let rp = require('request-promise');
 var triecomplete = require("triecomplete");
 const server = express()// Make the express server serve static assets (html, javascript, css) from the /public folder
@@ -21,6 +22,12 @@ wss.broadcast = function broadcast(data) {
 };
 wss.on('connection', (ws) => {
 	console.log('Connected');
+	loadsave.load('listnames.txt').then(function(result){
+		wss.broadcast({
+			type:"nameList",
+			data:result
+		})
+	});
 	ws.on('message', function(message) {
 		console.log(message);
 		let data = JSON.parse(message);
@@ -33,8 +40,8 @@ wss.on('connection', (ws) => {
 			break;
 			case 'getCards':
 				response.type = 'getCards';
-				list.getCard(data.card).then(function(data){
-					response.data = data;
+				list.getCard(data.card).then(function(result){
+					response.data = result;
 					response.data.index = 0;
 					response.data.quantity=1;
 					wss.broadcast(response);
@@ -43,16 +50,27 @@ wss.on('connection', (ws) => {
 			break;
 			case 'getPrice':
 				response.type = 'setCardPrice'
-				list.getCard(data.card).then(function(data){
-					response.data= data;
+				list.getCard(data.card).then(function(result){
+					response.data= result;
 					wss.broadcast(response);
 				});
 			break;
 			case 'save':
-				
+				loadsave.save(data.name,data.list).then(function(){
+					loadsave.load('listnames.txt').then(function(result){
+						wss.broadcast({
+							type:"nameList",
+							data:result
+						})
+					});
+				});
 			break;
 			case 'load':
-
+				loadsave.load(data.name).then(function(result){
+					response.type = 'load';
+					response.data = result;
+					wss.broadcast(response);
+				});
 			break;
 
 			case 'getSaveList':

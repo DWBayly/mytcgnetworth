@@ -30,6 +30,8 @@
     width: 75%;
     border: 5px solid darkviolet;
     padding: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
     margin-top: 0;
     background-color: white;
     overflow: auto;

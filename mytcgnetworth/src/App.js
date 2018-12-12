@@ -18,6 +18,7 @@ class App extends Component {
       cardurl : 'https://d1u5p3l4wpay3k.cloudfront.net/mtgsalvation_gamepedia/thumb/f/f8/Magic_card_back.jpg/429px-Magic_card_back.jpg?version=d581d48ea4f0bfe8670c2e8a4cae3c98',
       sname:"",
       lname:"",
+      names:[]
     }
     this.card = '';
     this.login=this.login.bind(this);
@@ -29,21 +30,27 @@ class App extends Component {
     this.state.remove = this.remove.bind(this);
     this.state.changeSelection = this.changeSelection.bind(this);
     this.state.updateQuantity = this.updateQuantity.bind(this);
-    this.saveList=this.saveList.bind(this);
-    this.loadList=this.loadList.bind(this);
-    this.setsName =this.setsName.bind(this);
-    this.setlname = this.setlName.bind(this);
+    this.state.saveList=this.saveList.bind(this);
+    this.state.loadList=this.loadList.bind(this);
+    this.state.setsName =this.setsName.bind(this);
+    this.state.setlName = this.setlName.bind(this);
+    this.setNameList = this.setNameList.bind(this);
+    this.load = this.load.bind(this);
   }
   login(){
     this.setState({loggedin:!this.state.loggedin});
   }
-  setsName(){
-
-
+  load(list){
+    this.setState({cards:list});
   }
-  setlName(){
-
-
+  setsName(name){
+    this.setState({sname:name.target.value});
+  }
+  setlName(name){
+    this.setState({lname:name.target.value});
+  }
+  setNameList(list){
+    this.setState({names:list});
   }
   updateQuantity(card,newval){
     let temp = this.state.cards;
@@ -51,15 +58,17 @@ class App extends Component {
     this.setState({cards:temp})
   }
   saveList(){
-    let message = this.state;
+    let message = {};
+    message.list = this.state.cards;
+    message.name = this.state.sname;
     message.type = "save";
-    this.ws.send(JSON.string);
+    this.ws.send(JSON.stringify(message));
   }
-  loadList(id){
+  loadList(){
     let message = {};
     message.type = "load";
-    message.id =id;
-    this.ws.send(JSON.string);
+    message.name =this.state.lname;
+    this.ws.send(JSON.stringify(message));
   }
   getSuggestions(event){
     let message={};
@@ -102,6 +111,8 @@ class App extends Component {
   render() {
       let ss = this.setSuggestions;
     let scl = this.setCardsList;
+    let snl = this.setNameList;
+    let ll =this.load;
     this.ws.onmessage = function (event) {
       let message = JSON.parse(event.data);
       //console.log(message);
@@ -112,19 +123,24 @@ class App extends Component {
         case 'getCards':
           scl(message.data);
         break;
-        case 'getPrice':
-        break;
+        case 'nameList':
+          snl(message.data);
+          break;
+        case 'load':
+          ll(message.data);
+          break;
         default:
         break;
       }
     }
-      <Home submitCard={this.submitCard} ws = {this.ws} getSuggestions= {this.getSuggestions} state = {this.state}/>
     return (
 
       <div className ='Search-Container' >
         <div className ='Search-Form'>
           <br/>
           <h1>Welcome to My TCG Networth</h1>
+          <Header/>
+          <br/>
             <Switch>
               <Route exact path='/' render={()=>(
                 <Home submitCard={this.submitCard}

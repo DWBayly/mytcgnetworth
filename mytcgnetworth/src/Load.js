@@ -4,14 +4,19 @@ class Load extends Component{
   	super(props);
   }
   render(){
+  	let elements = []
+  	for(let x in this.props.state.names){
+  		elements.push(<option key = {x}>{this.props.state.names[x]}</option>)
+  	}
   	return (
   		<div className= 'row'>
   			<div className= 'column'>
-  				<label>Input Name</label>
-  				<input type = 'text'/>
+  				<select onChange={this.props.state.setlName}>
+  					{elements}
+  				</select>
   			</div>
   			<div className= 'column'>
-  				<button className='SearchButton'>Load</button>
+  				<button onClick = {this.props.state.loadList} className='SearchButton'>Load</button>
   			</div>
   		</div>
 
