@@ -8,7 +8,6 @@ class Load extends Component{
   	for(let x in this.props.state.names){
   		elements.push(<option key = {x}>{this.props.state.names[x]}</option>)
   	}
-  	console.log(this.props.state.lname)
   	return (
   		<div className= 'row'>
   			<div className= 'column'>

@@ -41,7 +41,6 @@ class App extends Component {
     this.setState({loggedin:!this.state.loggedin});
   }
   load(list){
-    console.log(list);
     this.setState({cards:list});
   }
   setsName(name){
